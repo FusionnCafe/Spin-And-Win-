@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #fff8e6;
+    text-align: center;
+}
+
+.container {
+    max-width: 420px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #d35400;
+}
+
+.wheel-box {
+    position: relative;
+}
+
+#wheel {
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+#spinBtn {
+    margin-top: 20px;
+    padding: 15px 30px;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    font-size: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#spinBtn:hover {
+    background: #c0392b;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 20px;
+    color: green;
+}

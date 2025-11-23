@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spin & Win - Fusion Restaurant</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>🎉 Fusion Restaurant – Spin & Win 🎉</h1>
+
+    <div class="wheel-box">
+        <canvas id="wheel" width="350" height="350"></canvas>
+        <button id="spinBtn">SPIN NOW</button>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+<script>
+const prizes = ["10% OFF","Free Dosa","₹20 OFF","Free Coke","5% OFF","Try Again"];
+const colors = ["#ff9999","#ffe066","#b3ffb3","#99ccff","#ffcc99","#d9b3ff"];
+
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+let rotation = 0;
+let spinning = false;
+
+function drawWheel(rot = 0) {
+    const arc = (2 * Math.PI) / prizes.length;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(175, 175);
+    ctx.rotate(rot);
+    
+    for (let i = 0; i < prizes.length; i++) {
+        ctx.beginPath();
+        ctx.fillStyle = colors[i];
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, 170, i * arc, (i + 1) * arc);
+        ctx.fill();
+
+        ctx.save();
+        ctx.rotate(i * arc + arc / 2);
+        ctx.translate(100, 0);
+        ctx.rotate(Math.PI / 2);
+        ctx.fillStyle = "#333";
+        ctx.font = "16px Arial";
+        ctx.fillText(prizes[i], -ctx.measureText(prizes[i]).width / 2, 5);
+        ctx.restore();
+    }
+
+    ctx.restore();
+
+    // pointer
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(175, 10);
+    ctx.lineTo(165, 40);
+    ctx.lineTo(185, 40);
+    ctx.closePath();
+    ctx.fill();
+}
+
+drawWheel();
+
+document.getElementById("spinBtn").onclick = function () {
+    if (spinning) return;
+    spinning = true;
+    document.getElementById("result").innerHTML = "";
+
+    let finalRotation = rotation + (Math.random() * 2000 + 2000);
+    let start = performance.now();
+
+    function animate(time) {
+        let progress = (time - start) / 4000;
+        if (progress < 1) {
+            let eased = 1 - Math.pow(1 - progress, 3);
+            rotation = eased * finalRotation;
+            drawWheel(rotation * Math.PI / 180);
+            requestAnimationFrame(animate);
+        } else {
+            spinning = false;
+            let degrees = (rotation % 360 + 360) % 360;
+            let arc = 360 / prizes.length;
+            let index = Math.floor((360 - degrees + arc/2) / arc) % prizes.length;
+            let reward = prizes[index];
+            let code = reward === "Try Again" ? "-" : "CODE-" + Math.floor(Math.random()*9000 + 1000);
+
+            document.getElementById("result").innerHTML =
+                reward === "Try Again"
+                    ? "<p>You got: Try Again 😔</p>"
+                    : `<p>You won: <strong>${reward}</strong><br>Coupon: <strong>${code}</strong></p>`;
+        }
+    }
+
+    requestAnimationFrame(animate);
+};
+</script>
+
+</body>
+</html>
